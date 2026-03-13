@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,6 +25,11 @@ public class Users {
     private String password;
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onJoin() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Users(Integer userId, String username, String email, String password, LocalDateTime createdAt) {
         this.userId = userId;
