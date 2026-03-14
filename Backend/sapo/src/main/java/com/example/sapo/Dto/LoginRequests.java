@@ -1,27 +1,22 @@
 package com.example.sapo.Dto;
 
 public class LoginRequests {
-    private String email;
-    private String userpassword;
+    private String username;
+    private String password;
 
-    public String getEmail() {
-        return this.email;
+    public String getUsername() {
+        return this.username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getUserpassword() {
-        return this.userpassword;
+    public String getPassword() {
+        return this.password;
     }
 
-    public void setUserpassword(String userpassword) {
-        this.userpassword = userpassword;
-    }
-
-    public LoginRequests(String email, String userpassword) {
-        this.email = email;
-        this.userpassword = userpassword;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

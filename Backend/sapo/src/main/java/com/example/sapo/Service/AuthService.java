@@ -12,9 +12,9 @@ public class AuthService {
     @Autowired
     private UsersRepository usersRespository;
 
-    public Users authencate(String email, String rawPassword) {
+    public Users authencate(String username, String rawPassword) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        Users user = usersRespository.findByEmail(email)
+        Users user = usersRespository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found!!!"));
         if (!encoder.matches(rawPassword, user.getPassword())) {
             throw new RuntimeException("Incorrect password!!!");

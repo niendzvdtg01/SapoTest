@@ -19,7 +19,7 @@ public class UsersService {
     public Users createUsers(UserCreation requests) {
         Users user = new Users();
         user.setEmail(requests.getEmail());
-        user.setUsername(requests.getEmail());
+        user.setUsername(requests.getUsername());
         // hash password
         String passwordHash = encoder.encode(requests.getPassword());
         user.setPassword(passwordHash);

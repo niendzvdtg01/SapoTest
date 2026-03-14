@@ -43,7 +43,8 @@ public class OrderService {
 
         // check order
         checkOrder(request, user.getUserId());
-
+        // decrease stock
+        decreaseStock(product.getProductId(), request.getQuantity());
         // tao order
         Order order = new Order();
         order.setUserId(user);
@@ -77,6 +78,13 @@ public class OrderService {
 
         if (bought + request.getQuantity() > 2) {
             throw new RuntimeException("User can only buy maximum 2 products");
+        }
+    }
+
+    public void decreaseStock(Integer productId, Integer quantity) {
+        int udpated = productRepository.decreaseStock(productId, quantity);
+        if (udpated == 0) {
+            throw new RuntimeException("Not enough stock");
         }
     }
 }

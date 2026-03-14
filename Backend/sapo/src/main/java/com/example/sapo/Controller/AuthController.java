@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping(path = "/login")
     public ResponseEntity<?> login(@RequestBody LoginRequests requests, HttpServletResponse response) {
-        Users user = authServices.authencate(requests.getEmail(), requests.getUserpassword());
+        Users user = authServices.authencate(requests.getUsername(), requests.getPassword());
         String token = jwtUtils.generateToken(user);
 
         ResponseCookie cookie = ResponseCookie.from("access_cookie", token)
