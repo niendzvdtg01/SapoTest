@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 const LoginComponent = () => {
     const [isLogin, setIsLogin] = useState(true);
     const LOGINURL = "http://localhost:8080/auth/login";
     const REGISTERURL = "http://localhost:8080/user/create_user";
-
+    const naviagate = useNavigate();
     const [form, setForm] = useState({
         username: "",
         email: "",
@@ -27,6 +28,7 @@ const LoginComponent = () => {
             });
             alert(res.status);
             const data = await res.data;
+            naviagate("/shop");
             console.log(data);
         } catch (error) {
             console.error("Error:", error);

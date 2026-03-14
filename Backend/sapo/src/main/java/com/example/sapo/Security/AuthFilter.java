@@ -49,6 +49,7 @@ public class AuthFilter extends OncePerRequestFilter {
         if (token == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Missing requried cookie!!");
+            return;
         }
 
         if (!jwtUtils.validateToken(token)) {
@@ -58,6 +59,11 @@ public class AuthFilter extends OncePerRequestFilter {
         }
 
         var auth = jwtUtils.getAuthentication(token);
+        if (auth.getPrincipal() == null) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("Invalid token payload");
+            return;
+        }
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         filterChain.doFilter(request, response);

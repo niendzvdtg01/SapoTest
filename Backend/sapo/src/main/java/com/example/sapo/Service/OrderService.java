@@ -34,6 +34,9 @@ public class OrderService {
 
     @Transactional
     public void createOrder(FlashSaleRequest request) {
+        if (request.getUserId() == null) {
+            throw new IllegalArgumentException("UserId must not be null");
+        }
 
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));

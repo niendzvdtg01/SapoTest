@@ -12,6 +12,9 @@ public class FlashSaleRequest {
         this.quantity = quantity;
     }
 
+    public FlashSaleRequest() {
+    }
+
     public Integer getProductId() {
         return productId;
     }
@@ -23,4 +26,17 @@ public class FlashSaleRequest {
     public Integer getQuantity() {
         return quantity;
     }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
 }
