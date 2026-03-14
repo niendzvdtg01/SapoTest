@@ -1,402 +1,267 @@
-Sapo Flash Sale Backend
+# Flash Sale Order System
 
-Đây là một hệ thống Flash Sale Backend đơn giản được xây dựng bằng Spring Boot nhằm mô phỏng cách một hệ thống thương mại điện tử xử lý đơn hàng trong thời điểm khuyến mãi với lượng truy cập cao.
+## 1. Giới thiệu
 
-Hệ thống hỗ trợ các chức năng chính:
+Dự án xây dựng một **hệ thống đặt hàng Flash Sale đơn giản** sử dụng:
 
-Xác thực người dùng bằng JWT
+* **Backend:** Java Spring Boot (REST API)
+* **Frontend:** React
+* **Database:** MySQL
 
-Quản lý người dùng
+Hệ thống cho phép người dùng mua sản phẩm trong chương trình Flash Sale với các kiểm tra:
 
-Quản lý sản phẩm
+* Kiểm tra tồn kho sản phẩm
+* Giới hạn số lượng mua mỗi người
+* Tạo đơn hàng
+* Trả kết quả thành công hoặc thất bại
 
-Mua sản phẩm trong Flash Sale
+---
 
-Tạo đơn hàng
+# 2. Kiến trúc hệ thống
 
-Quản lý chi tiết đơn hàng
+Hệ thống gồm 2 phần chính:
 
-Hệ thống được xây dựng theo mô hình kiến trúc nhiều tầng (Layered Architecture) thường dùng trong các ứng dụng backend hiện đại.
-
-Công nghệ sử dụng
-
-Backend
-
-Java 17
-
-Spring Boot
-
-Spring Data JPA
-
-Spring Security
-
-Security
-
-JWT Authentication
-
-Database
-
-MySQL
-
-Build Tool
-
-Maven
-
-Cấu trúc thư mục project
-Backend
-│
-├── Config
-│   └── SecurityConfig.java
-│
-├── Controller
-│   ├── AuthController.java
-│   ├── FlashSaleController.java
-│   ├── ProductController.java
-│   └── UserController.java
-│
-├── Dto
-│   ├── FlashSaleRequest.java
-│   ├── LoginRequests.java
-│   └── UserCreation.java
-│
-├── Entity
-│   ├── OrderItem.java
-│   ├── Product.java
-│   └── Users.java
-│
-├── JpaRepository
-│   ├── OrderItemRepository.java
-│   ├── OrderRepository.java
-│   ├── ProductRepository.java
-│   └── UsersRepository.java
-│
-├── Security
-│   ├── AuthFilter.java
-│   └── jwtUtils.java
-│
-├── Service
-│   ├── AuthService.java
-│   ├── FlashSaleConsumer.java
-│   ├── FlashSaleService.java
-│   ├── OrderService.java
-│   ├── ProductService.java
-│   └── UsersService.java
-│
-├── SapoApplication.java
-└── ServletInitializer.java
-Mô tả các package
-Config
-
-Chứa các file cấu hình của hệ thống.
-
-Ví dụ:
-
-SecurityConfig.java
+## Backend (Spring Boot)
 
 Chức năng:
 
-cấu hình Spring Security
+* Xử lý logic Flash Sale
+* Kiểm tra tồn kho
+* Kiểm tra giới hạn mua mỗi người
+* Tạo đơn hàng
+* Trả kết quả API cho frontend
 
-cấu hình filter xác thực
+## Frontend (React)
 
-bảo vệ các API
+Chức năng:
 
-Controller Layer
+* Hiển thị danh sách sản phẩm Flash Sale
+* Cho phép người dùng bấm **Mua ngay**
+* Gửi request API đến backend
+* Hiển thị thông báo kết quả
 
-Controller chịu trách nhiệm nhận request từ client.
+---
 
-AuthController
+# 3. API Flash Sale
 
-Xử lý các API liên quan đến xác thực:
+## Endpoint
 
-đăng nhập
+```
+POST /api/flash-sale/order
+```
 
-tạo token JWT
+## Request Body
 
-FlashSaleController
+```json
+{
+  "productId": 1,
+  "userId": 2,
+  "quantity": 1
+}
+```
 
-Xử lý các request mua hàng trong chương trình Flash Sale.
+### Ý nghĩa
 
-ProductController
+| Field     | Mô tả             |
+| --------- | ----------------- |
+| productId | ID sản phẩm       |
+| userId    | ID người dùng     |
+| quantity  | số lượng muốn mua |
 
-Xử lý các API liên quan đến sản phẩm:
+---
 
-tạo sản phẩm
+## Response
 
-xem danh sách sản phẩm
+### Thành công
 
-UserController
+```json
+{
+  "message": "Đặt hàng thành công"
+}
+```
 
-Xử lý các API liên quan đến người dùng:
+### Hết hàng
 
-tạo tài khoản
+```json
+{
+  "message": "Sản phẩm đã hết hàng"
+}
+```
 
-quản lý thông tin người dùng
+### Vượt giới hạn
 
-DTO Layer
+```json
+{
+  "message": "Bạn đã vượt quá số lượng cho phép"
+}
+```
 
-DTO được sử dụng để nhận dữ liệu request từ client.
+---
 
-FlashSaleRequest
+# 4. Logic xử lý Flash Sale
 
-Request khi người dùng mua sản phẩm trong Flash Sale.
+Luồng xử lý:
 
-userId
-productId
-quantity
-LoginRequests
+```
+Client gửi request
+        ↓
+Backend nhận request
+        ↓
+Kiểm tra sản phẩm tồn tại
+        ↓
+Kiểm tra tồn kho
+        ↓
+Kiểm tra số lượng user đã mua
+        ↓
+Nếu hợp lệ:
+   - Giảm stock
+   - Tạo Order
+   - Tạo OrderItem
+        ↓
+Trả response
+```
 
-Request khi người dùng đăng nhập.
+---
 
-email
-password
-UserCreation
+# 5. Cấu trúc thư mục
 
-Request khi tạo tài khoản người dùng mới.
+```
+flash-sale-test
+│
+├── backend
+│   ├── controller
+│   │   └── FlashSaleController.java
+│   │
+│   ├── service
+│   │   └── FlashSaleService.java
+│   │
+│   ├── dto
+│   │   └── FlashSaleRequest.java
+│   │
+│   ├── repository
+│   │   ├── ProductRepository.java
+│   │   ├── OrderRepository.java
+│   │   └── OrderItemRepository.java
+│   │
+│   └── entity
+│       ├── Product.java
+│       ├── Order.java
+│       └── OrderItem.java
+│
+├── database
+│   └── schema.png
+│
+├── frontend
+│   └── FlashSale.jsx
+│
+└── README.md
+```
 
-name
-email
-password
-Entity Layer
+---
 
-Entity đại diện cho các bảng trong database.
+# 6. Thiết kế Database
 
-Users
+Hệ thống sử dụng 3 bảng chính.
 
-Lưu thông tin người dùng.
+## Product
 
+Lưu thông tin sản phẩm Flash Sale
+
+```
 id
 name
-email
-password
-Product
-
-Lưu thông tin sản phẩm.
-
-id
-name
-price
-salePrice
+original_price
+sale_price
 stock
-Order
+created_at
+```
 
-Đại diện cho một đơn hàng.
+## Order
 
+Lưu thông tin đơn hàng
+
+```
 id
 user_id
-total_amount
-status
+total_price
 created_at
-OrderItem
+```
 
-Lưu thông tin sản phẩm trong đơn hàng.
+## OrderItem
 
+Lưu chi tiết sản phẩm trong đơn hàng
+
+```
 id
 order_id
 product_id
 quantity
 price
-Repository Layer
+```
 
-Repository dùng để truy cập database thông qua Spring Data JPA.
+Sơ đồ database:
 
-Các repository trong hệ thống:
+```
+database/schema.png
+```
 
-UsersRepository
+---
 
-ProductRepository
+# 7. Frontend
 
-OrderRepository
+Component React thực hiện:
 
-OrderItemRepository
+* Hiển thị danh sách sản phẩm Flash Sale
+* Hiển thị:
 
-Tất cả repository đều kế thừa từ:
+  * tên sản phẩm
+  * giá gốc
+  * giá sale
+  * số lượng còn
+* Nút **Mua ngay**
+* Gửi request đến API
+* Hiển thị thông báo kết quả
 
-JpaRepository
-Service Layer
+---
 
-Service chứa business logic của hệ thống.
+# 8. Công nghệ sử dụng
 
-AuthService
+## Backend
 
-Xử lý các chức năng xác thực:
+* Java
+* Spring Boot
+* Spring Data JPA
+* REST API
 
-đăng nhập
+## Frontend
 
-tạo JWT token
+* React
+* Axios
 
-UsersService
+## Database
 
-Xử lý các chức năng liên quan đến người dùng:
+* MySQL
 
-tạo người dùng
+---
 
-lấy thông tin người dùng
+# 9. Hướng phát triển thêm
 
-ProductService
+Trong hệ thống Flash Sale thực tế có thể cải tiến:
 
-Xử lý các chức năng liên quan đến sản phẩm:
+* Redis cache để quản lý stock
+* Message Queue (RabbitMQ / Kafka)
+* Cơ chế chống oversell
+* Rate limit chống spam
+* Authentication và Authorization
 
-tạo sản phẩm
+---
 
-lấy danh sách sản phẩm
+# 10. Kết luận
 
-FlashSaleService
+Dự án mô phỏng hệ thống Flash Sale cơ bản bao gồm:
 
-Xử lý logic mua hàng trong Flash Sale:
-
-kiểm tra sản phẩm
-
-kiểm tra người dùng
-
-xử lý request mua hàng
-
-OrderService
-
-Xử lý việc tạo đơn hàng:
-
-tính tổng tiền
-
-tạo order
-
-tạo order item
-
-FlashSaleConsumer
-
-Mô phỏng consumer xử lý đơn hàng bất đồng bộ.
-
-Trong hệ thống thực tế, thành phần này thường sẽ:
-
-nhận message từ Message Queue
-
-xử lý tạo đơn hàng
-
-ghi vào database
-
-Security
-
-Hệ thống sử dụng JWT (JSON Web Token) để xác thực.
-
-Các thành phần chính:
-
-AuthFilter
-
-Filter kiểm tra JWT trong request.
-
-Chức năng:
-
-đọc token từ header
-
-xác thực token
-
-set thông tin user vào security context
-
-jwtUtils
-
-Chứa các hàm xử lý JWT:
-
-tạo token
-
-kiểm tra token
-
-lấy thông tin user từ token
-
-Quan hệ database
-Users
-  │
-  │ 1
-  ▼
-Orders
-  │
-  │ 1
-  ▼
-OrderItems
-  │
-  │
-  ▼
-Products
-
-Ý nghĩa:
-
-Một User có thể tạo nhiều Order
-
-Một Order có thể chứa nhiều OrderItem
-
-Mỗi OrderItem liên kết với một Product
-
-Luồng xử lý Flash Sale
-
-Request từ client:
-
-POST /flashsale
-
-Ví dụ request:
-
-{
-  "userId": 1,
-  "productId": 5,
-  "quantity": 2
-}
-
-Luồng xử lý:
-
-Client
-   ↓
-FlashSaleController
-   ↓
-FlashSaleService
-   ↓
-Kiểm tra User
-Kiểm tra Product
-   ↓
-Tạo Order
-   ↓
-Tạo OrderItem
-   ↓
-Lưu vào Database
-Cách chạy project
-
-Clone repository:
-
-git clone https://github.com/niendzvdtg01/SapoTest.git
-
-Di chuyển vào thư mục project:
-
-cd SapoTest
-
-Chạy project:
-
-mvn spring-boot:run
-
-Ứng dụng sẽ chạy tại:
-
-http://localhost:8080
-Hướng phát triển trong tương lai
-
-Để hệ thống Flash Sale có thể xử lý lượng truy cập lớn, có thể bổ sung:
-
-Redis
-
-Sử dụng Redis để:
-
-quản lý stock
-
-tránh overselling
-
-Message Queue
-
-Sử dụng:
-
-Kafka
-
-RabbitMQ
-
-để xử lý đơn hàng bất đồng bộ.
-
-Rate Limiting
-
-Giới hạn số request từ một user.
-
-Distributed Lock
-
-Tránh nhiều user mua cùng một sản phẩm khi stock thấp.
+* REST API đặt hàng
+* Kiểm tra tồn kho
+* Giới hạn mua mỗi người
+* Tạo đơn hàng
+* Kết nối frontend và backend
