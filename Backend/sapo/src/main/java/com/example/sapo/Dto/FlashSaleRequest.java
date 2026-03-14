@@ -6,6 +6,12 @@ public class FlashSaleRequest {
     private Integer userId;
     private Integer quantity;
 
+    public FlashSaleRequest(Integer productId, Integer userId, Integer quantity) {
+        this.productId = productId;
+        this.userId = userId;
+        this.quantity = quantity;
+    }
+
     public Integer getProductId() {
         return productId;
     }

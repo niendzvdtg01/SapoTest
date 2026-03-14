@@ -19,7 +19,7 @@ public class jwtUtils {
 
     public static String generateToken(Users user) {
         return Jwts.builder()
-                .subject(user.getEmail())
+                .subject(user.getUsername())
                 .claim("userId", user.getUserId())
                 .issuer("Niendz")
                 .issuedAt(new Date())

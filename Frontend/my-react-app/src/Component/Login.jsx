@@ -1,7 +1,37 @@
 import React, { useState } from "react";
-
+import axios from "axios";
 const LoginComponent = () => {
     const [isLogin, setIsLogin] = useState(true);
+    const LOGINURL = "http://localhost:8080/auth/login";
+    const REGISTERURL = "http://localhost:8080/user/create_user";
+
+    const [form, setForm] = useState({
+        username: "",
+        email: "",
+        password: ""
+
+    })
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setForm(prev => ({
+            ...prev,
+            [name]: value
+        }))
+    }
+
+    const handleSubmit = async () => {
+        try {
+            const url = isLogin ? LOGINURL : REGISTERURL;
+            const res = await axios.post(url, form, {
+                withCredentials: true
+            });
+            alert(res.status);
+            const data = await res.data;
+            console.log(data);
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    }
     return (
         <>
             <div className="container d-flex justify-content-center align-items-center vh-100">
@@ -16,21 +46,27 @@ const LoginComponent = () => {
 
                         {!isLogin && (
                             <div className="mb-3">
-                                <label className="form-label">Username</label>
+                                <label className="form-label">Email</label>
                                 <input
-                                    type="text"
+                                    type="email"
                                     className="form-control"
-                                    placeholder="Enter username"
+                                    placeholder="Enter email"
+                                    name="email"
+                                    value={form.email}
+                                    onChange={handleChange}
                                 />
                             </div>
                         )}
 
                         <div className="mb-3">
-                            <label className="form-label">Email</label>
+                            <label className="form-label">Username</label>
                             <input
-                                type="email"
+                                type="text"
                                 className="form-control"
-                                placeholder="Enter email"
+                                placeholder="Enter username"
+                                name="username"
+                                value={form.username}
+                                onChange={handleChange}
                             />
                         </div>
 
@@ -40,21 +76,13 @@ const LoginComponent = () => {
                                 type="password"
                                 className="form-control"
                                 placeholder="Enter password"
+                                name="password"
+                                value={form.password}
+                                onChange={handleChange}
                             />
                         </div>
 
-                        {!isLogin && (
-                            <div className="mb-3">
-                                <label className="form-label">Confirm Password</label>
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    placeholder="Confirm password"
-                                />
-                            </div>
-                        )}
-
-                        <button className="btn btn-primary w-100">
+                        <button className="btn btn-primary w-100" type="button" onClick={handleSubmit}>
                             {isLogin ? "Login" : "Register"}
                         </button>
 
@@ -85,9 +113,7 @@ const LoginComponent = () => {
                         )}
 
                     </div>
-
                 </div>
-
             </div>
         </>
     );
