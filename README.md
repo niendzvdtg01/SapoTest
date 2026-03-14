@@ -131,15 +131,25 @@ flash-sale-test
 ├── backend
 │   ├── controller
 │   │   └── FlashSaleController.java
+│   │   └── ProductController.java
+│   │   └── UsersController.java
+│   │   └── AuthService.java
 │   │
 │   ├── service
 │   │   └── FlashSaleService.java
+│   │   └── FlashCómume.java
+│   │   └── OrderSerice.java
+│   │   └── ProductSerice.java
+│   │   └── UsersSerice.java
 │   │
 │   ├── dto
 │   │   └── FlashSaleRequest.java
+│   │   └── LoginRequest.java
+│   │   └── UsetCreation.java
 │   │
 │   ├── repository
 │   │   ├── ProductRepository.java
+│   │   ├── UsersRepository.java
 │   │   ├── OrderRepository.java
 │   │   └── OrderItemRepository.java
 │   │
@@ -147,12 +157,12 @@ flash-sale-test
 │       ├── Product.java
 │       ├── Order.java
 │       └── OrderItem.java
-│
-├── database
-│   └── schema.png
+│       └── Users.java
+│        
 │
 ├── frontend
 │   └── FlashSale.jsx
+│   └── Login.jsx
 │
 └── README.md
 ```
@@ -161,8 +171,18 @@ flash-sale-test
 
 # 6. Thiết kế Database
 
-Hệ thống sử dụng 3 bảng chính.
+Hệ thống sử dụng 4 bảng chính.
+## Users
 
+Lưu thông tin sản phẩm Flash Sale
+
+```
+id
+username
+email
+password
+created_at
+```
 ## Product
 
 Lưu thông tin sản phẩm Flash Sale
